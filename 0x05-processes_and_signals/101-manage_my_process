@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# start for start manage_my_proces, create file contains it's PID in /var/run/my_process.pid,display manage_my_process.
+# stop for stop manage_my_process,delete /var/run/my_process.pid,manage_my_process
+# restart for stop manage_my_process,delete /var/run/my_process.pid,start manage_my_proces,
+if [ "$1" = "start" ]
+then
+    ./manage_my_process & 
+    echo "$$" > /var/run/my_process.pid
+    echo "manage_my_process started"
+elif [ "$1" = "stop" ]
+then
+     rm /var/run/my_process.pid
+     trap "echo 'manage_my_process stopped'" SIGTERM
+     pkill -f "manage_my_process"
+elif [ "$1" = "restart" ]
+then
+     trap "" SIGTERM
+     pkill -f  "manage_my_process"
+     rm /var/run/my_process.pid
+     ./manage_my_process &
+     echo "$$" > /var/run/my_process.pid
+     echo "manage_my_process restarted"
+else
+     echo "Usage: manage_my_process {start|stop|restart}" 
+fi
